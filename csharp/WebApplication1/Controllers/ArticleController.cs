@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using MySql.Data.MySqlClient;
 
 namespace WebApplication1.Controllers
@@ -44,5 +45,22 @@ namespace WebApplication1.Controllers
                 return new OkObjectResult(result);
             }
         }
+    }
+}
+
+public class CustomActionFilter : Attribute, IActionFilter
+{
+    public void OnActionExecuted(ActionExecutedContext context)
+    {
+        var result = context.HttpContext.Request.Headers.Any(x => x.Key == "Authorization" && x.Value == "FT");
+        if (!result)
+        {
+            context.HttpContext.Response.StatusCode = 403;
+            throw new AccessViolationException("Mr. D. prumpaði");
+        };
+    }
+
+    public void OnActionExecuting(ActionExecutingContext context)
+    {
     }
 }
