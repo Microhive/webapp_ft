@@ -4,12 +4,14 @@ using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
 
 namespace WebApplication1.Controllers
 {
     [Route("api/[controller]")]
+    [EnableCors("AllowAllOrigins")]
     [ApiController]
     public class ArticleController : ControllerBase
     {
@@ -17,6 +19,8 @@ namespace WebApplication1.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Article>>> Get()
         {
+            Request.HttpContext.Response.Headers.Add("Access-Control-Request-Headers", "*");
+
             using (var db = new AppDb())
             {
                 await db.Connection.OpenAsync();
@@ -30,6 +34,8 @@ namespace WebApplication1.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Article>> Get(int id)
         {
+            Request.HttpContext.Response.Headers.Add("Access-Control-Request-Headers", "*");
+
             using (var db = new AppDb())
             {
                 await db.Connection.OpenAsync();

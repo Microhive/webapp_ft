@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Net.Http.Headers;
 
 namespace WebApplication1
 {
@@ -27,6 +28,16 @@ namespace WebApplication1
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddTransient(_ => new AppDb());
+            services.AddCors(
+                options =>
+                {
+                    options.AddPolicy("AllowAllOrigins",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin();
+                    });
+                }
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,6 +54,7 @@ namespace WebApplication1
 
             app.UseHttpsRedirection();
             app.UseMvc();
+            app.UseCors(policy => policy.AllowAnyOrigin().WithExposedHeaders("Access-Control-Request-Headers"));
         }
     }
 }
